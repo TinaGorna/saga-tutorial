@@ -1,5 +1,6 @@
 const initial = {
-    people: []
+    people: [],
+    planets: []
 }
 export default function reducer(state = initial, action: any) {
     switch (action.type) {
@@ -8,6 +9,15 @@ export default function reducer(state = initial, action: any) {
                 ...state,
                 people: [
                     ...state.people,
+                    ...action.payload,
+                ]
+            }
+        }
+        case "SET_PLANETS": {
+            return {
+                ...state,
+                planets: [
+                    ...state.planets,
                     ...action.payload,
                 ]
             }
