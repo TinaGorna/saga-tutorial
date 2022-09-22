@@ -1,4 +1,5 @@
-import {takeLeading, put, call} from "redux-saga/effects"
+import {takeLeading, put, call, fork} from "redux-saga/effects"
+import {Simulate} from "react-dom/test-utils";
 
 async function getPeople() {
     const request = await fetch("http://swapi.dev/api/people")
@@ -6,17 +7,23 @@ async function getPeople() {
     return data;
 }
 
+export function* loadPeople() {
+    const people = yield call(getPeople, "people")
+    yield put({type: "SET_PEOPLE", payload: people.results})
+}
+
+export function* loadPlanets() {
+    const planets = yield call(getPeople, "people")
+    yield put({type: "SET_PLANETS", payload: planets.results})
+}
+
 export function* workerSaga() {//описываем бизнес логику (запросы, работа с API и асинхр действия)
-    const data = yield call(getPeople)
-    yield put({type: "SET_PEOPLE", payload: data.results})
+    yield fork(loadPeople)
+    yield fork(loadPlanets)
 }
 
 export function* watchClickSaga() { //записываем экшены, которые будут происходить в приложении
-    // yield take("CLICK") //передаем type нашего экшена
-    // yield workerSaga();
 
-    //yield takeEvery("CLICK", workerSaga) //вместо написания цикла каждый раз при клике будем вызывать workerSaga
-    //yield takeLatest("CLICK", workerSaga) ////мы будем кликать много раз, но из-за takeEvery сработает только один консоль лог
     yield takeLeading("CLICK", workerSaga)
 }
 
