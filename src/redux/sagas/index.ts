@@ -1,37 +1,19 @@
-import {takeEvery, put, call, fork, join, select} from "redux-saga/effects"
-import {spawn} from "child_process";
+import {fork, call, spawn, all, delay} from "redux-saga/effects"
 
-async function getPeople() {
-    const request = await fetch("http://swapi.dev/api/people")
-    const data = await request.json()
-    return data;
+export function* auth() {
+    yield delay(2000)
+    return true;
 }
 
-export function* loadPeople() {
-    const people = yield call(getPeople, "people")
-    yield put({type: "SET_PEOPLE", payload: people.results})
-
-    return people;
+export function* loadUser() {
+    const request = yield call(fetch, "http://swapi.dev/api/people");
+    const data = yield call([request, request.json])
 }
 
-export function* loadPlanets() {
-    const planets = yield call(getPeople, "people")
-    yield put({type: "SET_PLANETS", payload: planets.results})
+export function* loadBasicData() {
+    yield all([
+        fork(auth),
+        fork(loadUser)
+    ])
 }
 
-export function* workerSaga() {//описываем бизнес логику (запросы, работа с API и асинхр действия)
-    const task = yield fork(loadPeople)
-    // yield spawn(loadPlanets)
-    const store = yield select(s => s) //обращаемся ко store
-
-    const people = yield join(task)
-}
-
-export function* watchClickSaga() { //записываем экшены, которые будут происходить в приложении
-
-    yield takeEvery("LOAD_DATA", workerSaga)
-}
-
-export default function* rootSaga() { //всего лишь запускает наш watcher
-    yield fork(watchClickSaga);
-}

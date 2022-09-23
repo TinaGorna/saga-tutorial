@@ -9,6 +9,6 @@ const store = createStore(
     reducer,
     applyMiddleware(sagaMiddleware)
 )
-sagaMiddleware.run(rootSaga) //запускаем Сагу!
+sagaMiddleware.run(rootSaga)
 
 export default store;
