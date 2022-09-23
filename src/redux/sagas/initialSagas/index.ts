@@ -1,8 +1,10 @@
 import {all, call, spawn} from "redux-saga/effects";
 import {loadBasicData} from "../index";
+import pageLoaderSaga from "../pageLoaderSaga";
 
 export default function* rootSaga() {
-    const sagas = [loadBasicData]
+    const sagas = [loadBasicData, pageLoaderSaga]
+
     const retrySaga = sagas.map(saga => {
         return spawn(function* () {
             while (true) { //запускаем бесконечный цикл

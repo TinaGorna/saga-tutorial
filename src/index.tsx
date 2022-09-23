@@ -5,11 +5,10 @@ import App from "./pages/App";
 import store from "./redux";
 import {Route, Router} from "react-router";
 import {Switch} from "react-router-dom"
-import {createBrowserHistory} from "history";
 import Blog from "./pages/Blog";
 import NotFound from "./pages/NotFound";
 
-const history = createBrowserHistory()
+
 const root = ReactDOM.createRoot(
     document.getElementById("root") as HTMLElement
 );
